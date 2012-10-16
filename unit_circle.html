@@ -18,15 +18,16 @@ var frames=100
 var canvas;  
 var ctx;
 var counter = 0;
-var radius = 75;
+
+var WIDTH = 400;
+var HEIGHT = 300; 
+var radius = HEIGHT/6;
+
+var originX = WIDTH/2;
+var originY = HEIGHT/2;
 var x = originX + radius*Math.sin(counter/frames);
 var y = originY + radius*Math.cos(counter/frames);
 var dx = 2;
-var dy = 4;
-var WIDTH = 400;
-var HEIGHT = 300; 
-var originX = WIDTH/2;
-var originY = HEIGHT/2;
 
 function circle(x,y,r) {
   ctx.beginPath();
@@ -82,14 +83,8 @@ function draw() {
   line( originX, originY, x, originY ); /* cosine */
   ctx.lineWidth = 1;
 
-  /* 
-  if (x + dx > WIDTH || x + dx < 0)
-    dx = -dx;
-  if (y + dy > HEIGHT || y + dy < 0)
-    dy = -dy;
-  */
-
-  counter += dx;
+  /* counter += dx; */
+  counter++;
   x = originX + radius*Math.sin(counter/frames);
   y = originY + radius*Math.cos(counter/frames);
 }
