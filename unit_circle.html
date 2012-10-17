@@ -14,7 +14,7 @@
     </div>
 
 <script type="text/javascript">
-var frames=100
+var frames=25
 var canvas;  
 var ctx;
 var counter = 0;
@@ -23,10 +23,12 @@ var WIDTH = 400;
 var HEIGHT = 300; 
 var radius = HEIGHT/6;
 
-var originX = WIDTH/2;
-var originY = HEIGHT/2;
-var x = originX + radius*Math.sin(counter/frames);
-var y = originY + radius*Math.cos(counter/frames);
+var sinOriginX = radius/4;
+var originX = 3*WIDTH/4;
+var originY = 3*HEIGHT/4;
+var angle = ( counter + Math.PI/4 ) / frames;
+var x = originX + radius*Math.sin(angle);
+var y = originY + radius*Math.cos(angle);
 var dx = 2;
 
 function circle(x,y,r) {
@@ -69,6 +71,7 @@ function draw() {
   ctx.fillStyle = "#444444";
   line(       0, originY,   WIDTH, originY ); /* X axis */
   line( originX,       0, originX,  HEIGHT ); /* Y axis */
+
   /* line(); */
   circle( originX, originY, radius);
   line( x, originY, x, y ); /* sine */
@@ -77,8 +80,14 @@ function draw() {
   ctx.lineWidth = 4;
   ctx.strokeStyle = "#00FF00";
   line( originX, originY, x, y ); /* radius */
+
+  /* sine */
   ctx.strokeStyle = "#FF0000";
+  line( sinOriginX + ( counter % (Math.PI*2 * frames) ), originY, 
+        sinOriginX + ( counter % (Math.PI*2 * frames) ), y       ); 
   line( originX, originY, originX, y ); /* sine */
+
+  /* cosine */
   ctx.strokeStyle = "#0000FF";
   line( originX, originY, x, originY ); /* cosine */
   ctx.lineWidth = 1;
