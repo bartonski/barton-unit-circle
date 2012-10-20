@@ -131,17 +131,23 @@ function draw() {
   ctx.strokeStyle = "#FF0000";
   line( originX, originY, originX, y ); /* sine */
   line( sinOriginX + ( counter % (Math.PI*2 * frames) ), originY, 
-        sinOriginX + ( counter % (Math.PI*2 * frames) ), y       ); 
+        sinOriginX + ( counter % (Math.PI*2 * frames) ), y       ); /* Draw Sine Trace */
 
   /* cosine */
   ctx.strokeStyle = "#0000FF";
   line( originX, originY, x, originY ); /* cosine */
+  /* cosine trace */
+  var cosTraceX = cosOriginX + ( counter % (Math.PI*2 * frames) );
+  var cosTraceY = cosOriginY - mycos;
+  line ( cosTraceX, cosOriginY, cosTraceX, cosTraceY ); /* draw cosine trace */
+
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#000000";
+
+  line ( cosTraceX, cosTraceY, x, cosTraceY ); /* connect cosine trace and reflection line */
   wave( sinOriginX, originY, "sin", R, frames ); 
   wave( cosOriginX, cosOriginY, "cos", R, frames ); 
 
-  /* counter += dx; */
   counter++;
 }
 
