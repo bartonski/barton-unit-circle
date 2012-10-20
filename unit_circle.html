@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Canvas Test</title>
+    <title>Unit Circle</title>
   </head>
 <body>
   <section>
@@ -21,15 +21,14 @@ var counter = 0;
 
 var WIDTH = 400;
 var HEIGHT = 300; 
-var radius = HEIGHT/6;
+var R = HEIGHT/6;
 
-var sinOriginX = radius/4;
+var sinOriginX = R/4;
+var twoPiX     = sinOriginX + frames * Math.PI*2;
+var cosOriginX = R/4;
+var cosOriginY = HEIGHT/4;
 var originX = 3*WIDTH/4;
 var originY = 3*HEIGHT/4;
-var angle = ( counter + Math.PI/4 ) / frames;
-var x = originX + radius*Math.sin(angle);
-var y = originY + radius*Math.cos(angle);
-var dx = 2;
 
 function circle(x,y,r) {
   ctx.beginPath();
@@ -56,6 +55,26 @@ function line( x1, y1, x2, y2 ) {
   ctx.stroke();
 }
 
+function wave( yaxis, xaxis, operator, radius, frames ) {
+  var x0;
+  var x1;
+  var y0;
+  var y1;
+  var interval = Math.PI*2/frames ;
+  var i;
+  
+  for ( i=0.0; i<frames; i++ ) {
+    x0 = i * interval;
+    x1 = (i+1) * interval; 
+    y0 = (operator=="sin" ? Math.sin(-x0) : -Math.cos(x0) );
+    y1 = (operator=="sin" ? Math.sin(-x1) : -Math.cos(x1) );
+    line( x0 * frames + yaxis,
+          y0 * radius + xaxis,
+	  x1 * frames + yaxis,
+	  y1 * radius + xaxis );
+  }
+}
+
 function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
@@ -65,17 +84,44 @@ function init() {
 
 function draw() {
   clear();
-  ctx.strokeStyle = "#000000";
   ctx.fillStyle = "#FAF7F8";
   rect(0,0,WIDTH,HEIGHT);
   ctx.fillStyle = "#444444";
-  line(       0, originY,   WIDTH, originY ); /* X axis */
-  line( originX,       0, originX,  HEIGHT ); /* Y axis */
 
+  var angle = - ( counter + Math.PI/4 ) / frames;
+  var x = originX + R*Math.cos(angle);
+  var y = originY + R*Math.sin(angle);
+  var mycos = R*Math.cos(angle);
+  var mysin = R*Math.sin(angle);
+  ctx.strokeStyle = "#000000";
+
+  /* AXES */
+  line(          0,     originY,      WIDTH,        originY ); /* X axis */
+  line(    originX,           0,    originX,         HEIGHT ); /* Y axis */
+  line( sinOriginX,           0, sinOriginX,         HEIGHT ); /* Sine Y axis */
+  line(     twoPiX,           0,     twoPiX,         HEIGHT ); /* Sine Y axis + 2 Pi */
+  line(          0,  cosOriginY,      WIDTH,     cosOriginY ); /* Cosine X axis */
+  line(    originX,           0,    originX,         HEIGHT ); /* Y axis */
+
+  ctx.strokeStyle = "#777777";
+  /* Helper Lines*/
+  line( originX - cosOriginY, 2*cosOriginY, originX + cosOriginY, 0 ); /* Reflection line */
+  line(           0,    originY + R,        WIDTH,       originY + R ); /* X axis + Radius */
+  line(           0,    originY - R,        WIDTH,       originY - R ); /* X axis - Radius */
+  line(           0, cosOriginY + R,        WIDTH,    cosOriginY + R ); /* Cosine X axis + Radius */
+  line(           0, cosOriginY - R,        WIDTH,    cosOriginY - R ); /* Cosine X axis - Radius */
+  line( originX + R,              0,  originX + R,            HEIGHT ); /* Y axis + radius */
+  line( originX - R,              0,  originX - R,            HEIGHT ); /* Y axis - radius */
+
+  ctx.strokeStyle = "#000000";
   /* line(); */
-  circle( originX, originY, radius);
+  circle( originX, originY, R);
   line( x, originY, x, y ); /* sine */
   line( originX, y, x, y ); /* cosine */
+  line( sinOriginX + ( counter % (Math.PI*2 * frames) ), y,
+        originX, y);        /* connect sine trace to Y axis */
+  line( x, originY,
+        x, cosOriginY - mycos ); /* connect X axis to reflection line */
 
   ctx.lineWidth = 4;
   ctx.strokeStyle = "#00FF00";
@@ -83,19 +129,20 @@ function draw() {
 
   /* sine */
   ctx.strokeStyle = "#FF0000";
+  line( originX, originY, originX, y ); /* sine */
   line( sinOriginX + ( counter % (Math.PI*2 * frames) ), originY, 
         sinOriginX + ( counter % (Math.PI*2 * frames) ), y       ); 
-  line( originX, originY, originX, y ); /* sine */
 
   /* cosine */
   ctx.strokeStyle = "#0000FF";
   line( originX, originY, x, originY ); /* cosine */
   ctx.lineWidth = 1;
+  ctx.strokeStyle = "#000000";
+  wave( sinOriginX, originY, "sin", R, frames ); 
+  wave( cosOriginX, cosOriginY, "cos", R, frames ); 
 
   /* counter += dx; */
   counter++;
-  x = originX + radius*Math.sin(counter/frames);
-  y = originY + radius*Math.cos(counter/frames);
 }
 
 init();
