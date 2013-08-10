@@ -19,8 +19,8 @@ var canvas;
 var ctx;
 var counter = 0;
 
-var WIDTH = 400;
-var HEIGHT = 300; 
+var WIDTH = window.innerWidth;
+var HEIGHT = window.innerHeight; 
 var R = HEIGHT/6;
 
 var sinOriginX = R/4;
@@ -78,6 +78,8 @@ function wave( yaxis, xaxis, operator, radius, frames ) {
 function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
+  ctx.canvas.width  = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
   return setInterval(draw, 10);
 }
 
