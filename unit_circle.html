@@ -14,6 +14,8 @@
             </div>
 
             <script type="text/javascript">
+                /* TODO Document in comments. */
+
                 // define window
                 function win( width, height ) {
                     this.width = width;
@@ -126,6 +128,7 @@
                    return (operator=="sin") ? Math.sin(angle) : Math.cos(angle);
                 }
 
+                /* TODO: Wave currently starts at 0; should start at startPoint.x */
                 function wave( startPoint, width, operator, divisions, radius, theta ) {
                     var i;
                     var increment = twoPiX/divisions; 
