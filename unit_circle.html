@@ -1,161 +1,242 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Unit Circle</title>
-  </head>
-<body>
-  <section>
-    <div>
-        <canvas id="canvas" width="400" height="300">
-         This text is displayed if your browser 
-         does not support HTML5 Canvas.
-        </canvas>
-    </div>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Unit Circle</title>
+    </head>
+    <body>
+        <section>
+            <div>
+                <canvas id="canvas" width="400" height="300">
+                 This text is displayed if your browser 
+                 does not support HTML5 Canvas.
+                </canvas>
+            </div>
 
-<script type="text/javascript">
-var frames=25
-var canvas;  
-var ctx;
-var counter = 0;
+            <script type="text/javascript">
+                // define window
+                function win( width, height ) {
+                    this.width = width;
+                    this.height = height;
+                    this.usableHeight = 9*height/10;
+                    this.usableWidth = 9*width/10;
+                    this.xborder = this.width/20;
+                    this.yborder = this.height/20;
+                }
+                
+                var w = new win( window.innerWidth, window.innerHeight );
+                
+                function point( x, y ) {
+                    this.x = x;
+                    this.y = y;
+                    this.xreal = this.x + w.xborder;
+                    this.yreal = w.height - ( this.y + w.yborder );
+                    this.plus = pointAdd;
+                    this.plusX = xAdd;
+                    this.plusY = yAdd;
 
-var WIDTH = window.innerWidth;
-var HEIGHT = window.innerHeight; 
-var R = HEIGHT/6;
+                    function pointAdd( pt ) {
+                        return new point( this.x + pt.x, this.y + pt.y );
+                    }
 
-var sinOriginX = R/4;
-var twoPiX     = sinOriginX + frames * Math.PI*2;
-var cosOriginX = R/4;
-var cosOriginY = HEIGHT/4;
-var originX = 3*WIDTH/4;
-var originY = 3*HEIGHT/4;
+                    function xAdd ( x ) {
+                        return new point( this.x + x, this.y );
+                    }
 
-function circle(x,y,r) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI*2, true);
-  ctx.stroke();
-}
+                    function yAdd ( y ) {
+                        return new point( this.x, this.y + y );
+                    }
+                }
 
-function rect(x,y,w,h) {
-  ctx.beginPath();
-  ctx.rect(x,y,w,h);
-  ctx.closePath();
-  ctx.fill();
-}
+                var frames = 100;
+                var canvas;  
+                var ctx;
+                var counter = 0;
+                var theta = 0;
 
- 
-function clear() {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
-}
+                var R = w.usableHeight/6 < w.usableWidth/10 ? w.usableHeight/6 : w.usableWidth/10 ;
+                var leftX = R/4;
+                var twoPiX = leftX + Math.PI * 2 * R;
 
-function line( x1, y1, x2, y2 ) {
-  ctx.beginPath();
-  ctx.moveTo( x1, y1 );
-  ctx.lineTo( x2, y2 );
-  ctx.stroke();
-}
+                var origin     = new point( 4*w.usableWidth/5 , w.usableHeight/4 );
+                var cosOrigin  = new point( origin.x    , 3*w.usableHeight/4 );
 
-function wave( yaxis, xaxis, operator, radius, frames ) {
-  var x0;
-  var x1;
-  var y0;
-  var y1;
-  var interval = Math.PI*2/frames ;
-  var i;
-  
-  for ( i=0.0; i<frames; i++ ) {
-    x0 = i * interval;
-    x1 = (i+1) * interval; 
-    y0 = (operator=="sin" ? Math.sin(-x0) : -Math.cos(x0) );
-    y1 = (operator=="sin" ? Math.sin(-x1) : -Math.cos(x1) );
-    line( x0 * frames + yaxis,
-          y0 * radius + xaxis,
-	  x1 * frames + yaxis,
-	  y1 * radius + xaxis );
-  }
-}
+                function incrementAngle() {
+                    counter++;
+                    counter = counter % frames;
+                    return ( counter / frames ) * Math.PI*2;
+                }
 
-function init() {
-  canvas = document.getElementById("canvas");
-  ctx = canvas.getContext("2d");
-  ctx.canvas.width  = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
-  return setInterval(draw, 10);
-}
+                function circle(center,r) {
+                    ctx.beginPath();
+                    ctx.arc(center.xreal, center.yreal, r, 0, Math.PI*2, true);
+                    ctx.stroke();
+                }
 
+                function rect(x,y,w,h) {
+                    ctx.beginPath();
+                    ctx.rect(x,y,w,h);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                 
+                function clear() {
+                  ctx.clearRect(0, 0, w.width, w.height );
+                }
 
-function draw() {
-  clear();
-  ctx.fillStyle = "#FAF7F8";
-  rect(0,0,WIDTH,HEIGHT);
-  ctx.fillStyle = "#444444";
+                function _line( x1, y1, x2, y2, color, width ) {
+                    var color = color;
+                    var oldcolor = ctx.strokeStyle;
+                    var oldwidth = ctx.lineWidth;
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = width;
+                    ctx.beginPath();
+                    ctx.moveTo( x1, y1 );
+                    ctx.lineTo( x2, y2 );
+                    ctx.stroke();
+                    ctx.strokeStyle = oldcolor;
+                    ctx.lineWidth = oldwidth;
+                }
 
-  var angle = - ( counter + Math.PI/4 ) / frames;
-  var x = originX + R*Math.cos(angle);
-  var y = originY + R*Math.sin(angle);
-  var mycos = R*Math.cos(angle);
-  var mysin = R*Math.sin(angle);
-  ctx.strokeStyle = "#000000";
+                function line( pt1, pt2, color, width ) {
+                    _line( pt1.xreal, pt1.yreal, pt2.xreal, pt2.yreal, color, width );
+                }
 
-  /* AXES */
-  line(          0,     originY,      WIDTH,        originY ); /* X axis */
-  line(    originX,           0,    originX,         HEIGHT ); /* Y axis */
-  line( sinOriginX,           0, sinOriginX,         HEIGHT ); /* Sine Y axis */
-  line(     twoPiX,           0,     twoPiX,         HEIGHT ); /* Sine Y axis + 2 Pi */
-  line(          0,  cosOriginY,      WIDTH,     cosOriginY ); /* Cosine X axis */
-  line(    originX,           0,    originX,         HEIGHT ); /* Y axis */
+                function hline( pt, color, width ) {
+                    _line( w.xborder, pt.yreal,  w.width-w.xborder, pt.yreal, color, width );
+                }
 
-  ctx.strokeStyle = "#777777";
-  /* Helper Lines*/
-  line( originX - cosOriginY, 2*cosOriginY, originX + cosOriginY, 0 ); /* Reflection line */
-  line(           0,    originY + R,        WIDTH,       originY + R ); /* X axis + Radius */
-  line(           0,    originY - R,        WIDTH,       originY - R ); /* X axis - Radius */
-  line(           0, cosOriginY + R,        WIDTH,    cosOriginY + R ); /* Cosine X axis + Radius */
-  line(           0, cosOriginY - R,        WIDTH,    cosOriginY - R ); /* Cosine X axis - Radius */
-  line( originX + R,              0,  originX + R,            HEIGHT ); /* Y axis + radius */
-  line( originX - R,              0,  originX - R,            HEIGHT ); /* Y axis - radius */
+                function vline( pt, color, width ) {
+                    _line( pt.xreal , w.yborder, pt.xreal , w.height-w.yborder, color, width );
+                }
 
-  ctx.strokeStyle = "#000000";
-  /* line(); */
-  circle( originX, originY, R);
-  line( x, originY, x, y ); /* sine */
-  line( originX, y, x, y ); /* cosine */
-  line( sinOriginX + ( counter % (Math.PI*2 * frames) ), y,
-        originX, y);        /* connect sine trace to Y axis */
-  line( x, originY,
-        x, cosOriginY - mycos ); /* connect X axis to reflection line */
+                function xAxes ( origin ) {
+                    hline( origin, "#000000", 1 );
+                    hline( origin.plusY( R ), "#777777", 1 );
+                    hline( origin.plusY( -R ), "#777777", 1 );
+                }
 
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = "#00FF00";
-  line( originX, originY, x, y ); /* radius */
+                function yAxes ( origin ) {
+                    vline( origin, "#000000", 1 );
+                    vline( origin.plusX( R ), "#777777", 1 );
+                    vline( origin.plusX( -R ), "#777777", 1 );
+                }
 
-  /* sine */
-  ctx.strokeStyle = "#FF0000";
-  line( originX, originY, originX, y ); /* sine */
-  line( sinOriginX + ( counter % (Math.PI*2 * frames) ), originY, 
-        sinOriginX + ( counter % (Math.PI*2 * frames) ), y       ); /* Draw Sine Trace */
+                function operate( operator, angle ) {
+                   return (operator=="sin") ? Math.sin(angle) : Math.cos(angle);
+                }
 
-  /* cosine */
-  ctx.strokeStyle = "#0000FF";
-  line( originX, originY, x, originY ); /* cosine */
-  /* cosine trace */
-  var cosTraceX = cosOriginX + ( counter % (Math.PI*2 * frames) );
-  var cosTraceY = cosOriginY - mycos;
-  line ( cosTraceX, cosOriginY, cosTraceX, cosTraceY ); /* draw cosine trace */
+                function wave( startPoint, width, operator, divisions, radius, theta ) {
+                    var i;
+                    var increment = twoPiX/divisions; 
+                    var angleIncrement = (Math.PI * 2)/divisions;
+                    var x = startPoint.x;
+                    var y = startPoint.y;
+                    for( i=0; i < divisions; i++ ) {
+                        angle = theta + (i*angleIncrement);
+                        var start = new point( i*increment, y+radius*operate( operator, angle ) );
+                        angle = theta+(i+1)*angleIncrement;
+                        var end = new point( (i+1)*increment, y+radius*operate( operator, angle ) );
+                        line( start, end, "#000000", 1 );
+                    }
+                } 
 
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "#000000";
+                function init() {
+                    canvas = document.getElementById("canvas");
+                    ctx = canvas.getContext("2d");
+                    ctx.canvas.width  = window.innerWidth;
+                    ctx.canvas.height = window.innerHeight;
+                    return setInterval(draw, 10);
+                }
 
-  line ( cosTraceX, cosTraceY, x, cosTraceY ); /* connect cosine trace and reflection line */
-  wave( sinOriginX, originY, "sin", R, frames ); 
-  wave( cosOriginX, cosOriginY, "cos", R, frames ); 
+                function draw() {
+                    clear();
+                    ctx.fillStyle = "#FAF7F8";
+                    rect(0,0,w.width,w.height);
+                    ctx.fillStyle = "#444444";
 
-  counter++;
-}
+                    // handy way of storing cos(theta) and sin(theta)
+                    var thetaPoint = new point( R*Math.cos(theta),  R*Math.sin(theta) ); 
 
-init();
-</script>
+                    // point of tangency on the unit circle.
+                    var tanPoint = origin.plus( thetaPoint );
 
-  </section>
-</body>
+                    var originSin = origin.plusY( thetaPoint.y );
+
+                    var originCos = origin.plusX( thetaPoint.x );
+                    /* AXES */
+                    xAxes( origin );
+                    yAxes( origin );
+                    xAxes( cosOrigin );
+                    
+                    ctx.strokeStyle = "#000000";
+                    /* line(); */
+                    circle( origin, R );
+
+                    var radiusColor = "#0000FF";
+                    var sinColor = "FF0000";
+                    var cosColor = "00FF00";
+                    line( origin , tanPoint  , radiusColor, 4 );     // Draw radius.
+                    line( origin , originSin , sinColor   , 4 );     // Draw sine on Y axis.
+                    line( origin , originCos , cosColor   , 4 );     // Draw cosine on X axis.
+
+                    var reflectionStart = cosOrigin.plus(new point ( -R, -R ));
+                    var reflectionEnd   = cosOrigin.plus(new point ( R, R ));
+                    var reflectionCos   = cosOrigin.plus(new point ( thetaPoint.x, thetaPoint.x ));
+                    var leftXOrigin     = new point( leftX, origin.y );
+                    var twoPiXOrigin    = new point( twoPiX, origin.y );
+                    var leftXcosOrigin  = new point( leftX, cosOrigin.y );
+                    var cosLeftX        = leftXcosOrigin.plusY( thetaPoint.x );
+                    var sinLeftX        = leftXOrigin.plusY( thetaPoint.y );
+                    var divisions       = 100;
+
+                    // Reflection line
+                    line( reflectionStart, reflectionEnd, "#000000", 1); 
+
+                    // connect originCos to reflection line.
+                    line( tanPoint, reflectionCos, "#000000", 1 );
+
+                    // vertical line at leftX
+                    vline( leftXOrigin, "#000000", 1 );
+
+                    // vertical line at twoPiX
+                    vline( twoPiXOrigin, "#000000", 1 );
+
+                    // connect reflection line to leftX
+                    line( reflectionCos, cosLeftX, "#000000", 1 );
+
+                    // connect originSin to leftX
+                    line( tanPoint, sinLeftX, "#000000", 1 );
+
+                    // Sine redrawn on leftX
+                    line( leftXOrigin, sinLeftX, sinColor, 4 );
+
+                    // Sine redrawn on twoPiX
+                    line( new point( twoPiX, origin.y ),
+                          new point( twoPiX, origin.y+thetaPoint.y),
+                          sinColor, 4
+                    );
+
+                    // Cosine redrawn on leftX
+                    line( leftXcosOrigin, cosLeftX, cosColor, 4 );
+
+                    // Cosine redrawn on twoPiX
+                    line( new point( twoPiX, cosOrigin.y ),
+                          new point( twoPiX, cosOrigin.y + thetaPoint.x),
+                          cosColor, 4
+                    );
+
+                    // Sine wave
+                    wave( leftXOrigin    , twoPiX , "sin" , divisions , R , theta );
+
+                    // Cosine wave
+                    wave( leftXcosOrigin , twoPiX , "cos" , divisions , R , theta );
+
+                    theta = incrementAngle();
+                }
+
+                init();
+            </script>
+        </section>
+    </body>
 </html>
