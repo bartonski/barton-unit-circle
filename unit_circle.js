@@ -66,8 +66,8 @@ function rect(x,y,w,h) {
     ctx.fill();
 }
 
-function text( pt, label, color) {
-    ctx.font = "30px Arial";
+function text( pt, label, textSize, color) {
+    ctx.font = textSize + "px Arial";
     ctx.fillStyle = color;
     ctx.fillText(label, pt.xreal, pt.yreal); 
 }
@@ -192,8 +192,8 @@ function draw() {
     vline( leftXOrigin, "#000000", 1 );
 
     // Text
-    text( leftXOrigin.plusY( -1.3 * R ), "Sine", sinColor ) ;
-    text( leftXcosOrigin.plusY( -1.3 * R ), "Cosine", cosColor ) ;
+    text( leftXOrigin.plusY( -1.3 * R ), "Sine", w.height / 30 , sinColor ) ;
+    text( leftXcosOrigin.plusY( -1.3 * R ), "Cosine", w.height / 30 , cosColor ) ;
 
     // vertical line at twoPiX
     vline( twoPiXOrigin, "#000000", 1 );
