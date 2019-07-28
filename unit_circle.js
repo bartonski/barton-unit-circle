@@ -44,10 +44,8 @@ var R = w.usableHeight/6 < w.usableWidth/10 ? w.usableHeight/6 : w.usableWidth/1
 var leftX = R/4;
 var twoPiX = leftX + Math.PI * 2 * R;
 
-var origin     = new point( 4*w.usableWidth/5 , w.usableHeight/4 );
-var cosOrigin  = new point( origin.x    , 3*w.usableHeight/4 );
-// var origin     = new point( 4*w.usableWidth/5 , 3*w.usableHeight/4 );
-// var cosOrigin  = new point( origin.x    , w.usableHeight/4 );
+var origin     = new point( 4*w.usableWidth/5 , 3*w.usableHeight/4 );
+var cosOrigin  = new point( origin.x    , w.usableHeight/4 );
 
 function incrementAngle() {
     counter++;
