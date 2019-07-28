@@ -34,7 +34,7 @@ function point( x, y ) {
     }
 }
 
-var frames = 100;
+var frames = 600;
 var canvas;  
 var ctx;
 var counter = 0;
@@ -115,15 +115,15 @@ function operate( operator, angle ) {
 /* TODO: Wave currently starts at 0; should start at startPoint.x */
 function wave( startPoint, width, operator, divisions, radius, theta ) {
     var i;
-    var increment = twoPiX/divisions; 
     var angleIncrement = (Math.PI * 2)/divisions;
     var x = startPoint.x;
     var y = startPoint.y;
+    var increment = (twoPiX - x)/divisions; 
     for( i=0; i < divisions; i++ ) {
         angle = theta + (i*angleIncrement);
-        var start = new point( i*increment, y+radius*operate( operator, angle ) );
+        var start = new point( (i)*increment + x, y+radius*operate( operator, angle ) );
         angle = theta+(i+1)*angleIncrement;
-        var end = new point( (i+1)*increment, y+radius*operate( operator, angle ) );
+        var end = new point( (i+1)*increment + x, y+radius*operate( operator, angle ) );
         line( start, end, "#000000", 1 );
     }
 } 
@@ -151,21 +151,16 @@ function draw() {
     var originSin = origin.plusY( thetaPoint.y );
 
     var originCos = origin.plusX( thetaPoint.x );
-    /* AXES */
-    xAxes( origin );
-    yAxes( origin );
-    xAxes( cosOrigin );
     
     ctx.strokeStyle = "#000000";
     /* line(); */
     circle( origin, R );
 
     var radiusColor = "#0000FF";
-    var sinColor = "FF0000";
-    var cosColor = "00FF00";
-    line( origin , tanPoint  , radiusColor, 4 );     // Draw radius.
-    line( origin , originSin , sinColor   , 4 );     // Draw sine on Y axis.
-    line( origin , originCos , cosColor   , 4 );     // Draw cosine on X axis.
+    var sinColor = "#FF0000";
+    var cosColor = "#00CC00";
+    var debugColor = sinColor;
+
 
     var reflectionStart = cosOrigin.plus(new point ( -R, -R ));
     var reflectionEnd   = cosOrigin.plus(new point ( R, R ));
@@ -175,10 +170,24 @@ function draw() {
     var leftXcosOrigin  = new point( leftX, cosOrigin.y );
     var cosLeftX        = leftXcosOrigin.plusY( thetaPoint.x );
     var sinLeftX        = leftXOrigin.plusY( thetaPoint.y );
-    var divisions       = 100;
+    var divisions       = frames;
+
+    /* Fixed lines */
+
+    /* AXES */
+    xAxes( origin );
+    yAxes( origin );
+    xAxes( cosOrigin );
 
     // Reflection line
     line( reflectionStart, reflectionEnd, "#000000", 1); 
+
+
+    /* Moving Lines */
+
+    line( origin , tanPoint  , radiusColor, 4 );     // Draw radius.
+    line( origin , originSin , sinColor   , 4 );     // Draw sine on Y axis.
+    line( origin , originCos , cosColor   , 4 );     // Draw cosine on X axis.
 
     // connect originCos to reflection line.
     line( tanPoint, reflectionCos, "#000000", 1 );
