@@ -113,7 +113,7 @@ function operate( operator, angle ) {
 }
 
 /* TODO: Wave currently starts at 0; should start at startPoint.x */
-function wave( startPoint, width, operator, divisions, radius, theta ) {
+function wave( startPoint, width, operator, divisions, radius, theta, color ) {
     var i;
     var angleIncrement = (Math.PI * 2)/divisions;
     var x = startPoint.x;
@@ -124,7 +124,7 @@ function wave( startPoint, width, operator, divisions, radius, theta ) {
         var start = new point( (i)*increment + x, y+radius*operate( operator, angle ) );
         angle = theta+(i+1)*angleIncrement;
         var end = new point( (i+1)*increment + x, y+radius*operate( operator, angle ) );
-        line( start, end, "#000000", 1 );
+        line( start, end, color, 1 );
     }
 } 
 
@@ -205,6 +205,9 @@ function draw() {
     // connect originSin to leftX
     line( tanPoint, sinLeftX, "#000000", 1 );
 
+    // connect originSin to leftX
+    line( originSin, sinLeftX, "#000000", 1 );
+
     // Sine redrawn on leftX
     line( leftXOrigin, sinLeftX, sinColor, 4 );
 
@@ -224,10 +227,10 @@ function draw() {
     );
 
     // Sine wave
-    wave( leftXOrigin    , twoPiX , "sin" , divisions , R , theta );
+    wave( leftXOrigin    , twoPiX , "sin" , divisions , R , theta, sinColor );
 
     // Cosine wave
-    wave( leftXcosOrigin , twoPiX , "cos" , divisions , R , theta );
+    wave( leftXcosOrigin , twoPiX , "cos" , divisions , R , theta, cosColor );
 
     theta = incrementAngle();
 }
