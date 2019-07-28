@@ -156,9 +156,9 @@ function draw() {
     ctx.strokeStyle = "#000000";
     circle( origin, R );
 
-    var radiusColor = "#0000FF";
+    var radiusColor = "#00CC00";
     var sinColor = "#FF0000";
-    var cosColor = "#00CC00";
+    var cosColor = "#0000FF";
     var debugColor = sinColor;
 
 
