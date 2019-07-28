@@ -46,6 +46,8 @@ var twoPiX = leftX + Math.PI * 2 * R;
 
 var origin     = new point( 4*w.usableWidth/5 , w.usableHeight/4 );
 var cosOrigin  = new point( origin.x    , 3*w.usableHeight/4 );
+// var origin     = new point( 4*w.usableWidth/5 , 3*w.usableHeight/4 );
+// var cosOrigin  = new point( origin.x    , w.usableHeight/4 );
 
 function incrementAngle() {
     counter++;
@@ -137,6 +139,7 @@ function init() {
 }
 
 function draw() {
+    console.log( theta );
     clear();
     ctx.fillStyle = "#FAF7F8";
     rect(0,0,w.width,w.height);
@@ -153,7 +156,6 @@ function draw() {
     var originCos = origin.plusX( thetaPoint.x );
     
     ctx.strokeStyle = "#000000";
-    /* line(); */
     circle( origin, R );
 
     var radiusColor = "#0000FF";
@@ -172,7 +174,7 @@ function draw() {
     var sinLeftX        = leftXOrigin.plusY( thetaPoint.y );
     var divisions       = frames;
 
-    /* Fixed lines */
+    /* =========================== Fixed Lines  =========================== */
 
     /* AXES */
     xAxes( origin );
@@ -183,7 +185,13 @@ function draw() {
     line( reflectionStart, reflectionEnd, "#000000", 1); 
 
 
-    /* Moving Lines */
+    // vertical line at leftX
+    vline( leftXOrigin, "#000000", 1 );
+
+    // vertical line at twoPiX
+    vline( twoPiXOrigin, "#000000", 1 );
+
+    /* =========================== Moving Lines =========================== */
 
     line( origin , tanPoint  , radiusColor, 4 );     // Draw radius.
     line( origin , originSin , sinColor   , 4 );     // Draw sine on Y axis.
@@ -192,11 +200,6 @@ function draw() {
     // connect originCos to reflection line.
     line( tanPoint, reflectionCos, "#000000", 1 );
 
-    // vertical line at leftX
-    vline( leftXOrigin, "#000000", 1 );
-
-    // vertical line at twoPiX
-    vline( twoPiXOrigin, "#000000", 1 );
 
     // connect reflection line to leftX
     line( reflectionCos, cosLeftX, "#000000", 1 );
