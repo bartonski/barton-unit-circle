@@ -10,7 +10,8 @@ function win( width, height ) {
     this.yborder = this.height/20;
 }
 
-var w = new win( window.innerWidth, window.innerHeight );
+// leave room for slider below window.
+var w = new win( window.innerWidth, window.innerHeight - 100 );
 
 function point( x, y ) {
     this.x = x;
@@ -134,16 +135,16 @@ function wave( startPoint, width, operator, divisions, radius, theta, color ) {
     }
 } 
 
-function init() {
+function init( framecount ) {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext("2d");
-    ctx.canvas.width  = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    ctx.canvas.width  = w.width;
+    ctx.canvas.height = w.height;
+    frames=framecount;
     return setInterval(draw, 10);
 }
 
 function draw() {
-    console.log( theta );
     clear();
     ctx.fillStyle = "#FAF7F8";
     rect(0,0,w.width,w.height);
@@ -247,4 +248,15 @@ function draw() {
     theta = incrementAngle();
 }
 
-init();
+init( 500 );
+
+var slider = document.getElementById("frameCount");
+var output = document.getElementById("sliderOutput");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+    var sliderFrames = this.value;
+    output.innerHTML = sliderFrames;
+    init( sliderFrames );
+}
