@@ -65,6 +65,12 @@ function rect(x,y,w,h) {
     ctx.closePath();
     ctx.fill();
 }
+
+function text( pt, label, color) {
+    ctx.font = "30px Arial";
+    ctx.fillStyle = color;
+    ctx.fillText(label, pt.xreal, pt.yreal); 
+}
  
 function clear() {
   ctx.clearRect(0, 0, w.width, w.height );
@@ -182,9 +188,12 @@ function draw() {
     // Reflection line
     line( reflectionStart, reflectionEnd, "#000000", 1); 
 
-
     // vertical line at leftX
     vline( leftXOrigin, "#000000", 1 );
+
+    // Text
+    text( leftXOrigin.plusY( -1.3 * R ), "Sine", sinColor ) ;
+    text( leftXcosOrigin.plusY( -1.3 * R ), "Cosine", cosColor ) ;
 
     // vertical line at twoPiX
     vline( twoPiXOrigin, "#000000", 1 );
@@ -207,6 +216,9 @@ function draw() {
 
     // connect originSin to leftX
     line( originSin, sinLeftX, "#000000", 1 );
+
+    // connect originCos to tanPoint
+    line( originCos, tanPoint, "#000000", 1 );
 
     // Sine redrawn on leftX
     line( leftXOrigin, sinLeftX, sinColor, 4 );
